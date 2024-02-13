@@ -7,3 +7,6 @@ class Category(models.Model):
 
 class Product(models.Model):
     pass
+
+class Review(models.Model):
+    pass
