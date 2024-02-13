@@ -4,24 +4,62 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-        {% block title %}{% endblock title %}
-    </title>
+    <title>{% block title %}{% endblock title %}</title>
     {% include "top.html" %}
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </head>
   <body style="font-family: 'Lexend', sans-serif">
     <div class="container mx-auto">
-      {% if messages %}
-      {% for message in messages %}
-      <div class="alert alert-success alert-dismissible fade show my-3" role="alert">
+      {% if messages %} {% for message in messages %}
+      <div
+        class="alert alert-success alert-dismissible fade show my-3"
+        role="alert"
+      >
         <strong>{{message}}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
-      {% endfor %}
-      {% endif %}
+      {% endfor %} {% endif %}
     </div>
-    {% include "navbar.html" %}
-    {% block content %} {% endblock content %}
-{% include "bottom.html" %}
+    {% include "navbar.html" %} {% block content %} {% endblock content %}
+    {%include "bottom.html" %}
+    <script>
+      $(document).ready(function () {
+        $(".add-to-cart-form").submit(function (e) {
+          e.preventDefault();
+          var form = $(this);
+          var url = form.attr("action");
+          var method = form.attr("method");
+          var formData = form.serialize();
+          $.ajax({
+            url: url,
+            method: method,
+            data: formData,
+            success: function (response) {
+              var currentCount = parseInt($("#cart-count").text());
+              $("#cart-count").text(currentCount + 1);
+              $("#messageDiv").html(
+                '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                  "Product added to cart." +
+                  '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                  "</div>"
+              );
+            },
+            error: function (xhr, errmsg, err) {
+              $("#messageDiv").text("Error occured");
+            },
+          });
+        });
+      });
+    </script>
   </body>
 </html>

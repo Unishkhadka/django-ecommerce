@@ -5,7 +5,7 @@
         <li class="nav-item"><a href="{% url 'products' %}" class="nav-link link-body-emphasis px-2">Products</a></li>
         <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link link-body-emphasis px-2">Contact</a></li>
         {% if request.user.is_authenticated %}
-        <li class="nav-item"><a href="{% url 'cart' %}" class="nav-link link-body-emphasis px-2">Cart(0)</i></a></li>
+        <li class="nav-item"><a href="{% url 'cart' %}" class="nav-link link-body-emphasis px-2">Cart(<span id="cart-count">{{cart_item_count}}</span>)</i></a></li>
         <li class="nav-item"><a href="{% url 'orders' %}" class="nav-link link-body-emphasis px-2">Orders</a></li>
         {% endif %}
       </ul>

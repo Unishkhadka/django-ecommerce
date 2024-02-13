@@ -6,7 +6,7 @@ from users.models import CustomUser as User
 
 class Category(models.Model):
     id = models.CharField(
-        default=shortuuid.uuid,max_length=50, primary_key=True, editable=False
+        default=shortuuid.uuid, max_length=50, primary_key=True, editable=False
     )
     category_name = models.CharField(
         _("Category Name"), max_length=100, null=True, blank=True
@@ -21,7 +21,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     id = models.CharField(
-        default=shortuuid.uuid, max_length=50,primary_key=True, editable=False
+        default=shortuuid.uuid, max_length=50, primary_key=True, editable=False
     )
     product_name = models.CharField(
         _("Product Name"), max_length=500, null=True, blank=True
@@ -53,7 +53,7 @@ class Review(models.Model):
     )
 
     id = models.CharField(
-        default=shortuuid.uuid,max_length=50, primary_key=True, editable=False
+        default=shortuuid.uuid, max_length=50, primary_key=True, editable=False
     )
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, null=True, blank=True
@@ -65,3 +65,60 @@ class Review(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+
+class Cart(models.Model):
+    id = models.CharField(
+        default=shortuuid.uuid, max_length=50, primary_key=True, editable=False
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.user.full_name + " cart")
+
+
+class CartItem(models.Model):
+    id = models.CharField(
+        default=shortuuid.uuid, max_length=50, primary_key=True, editable=False
+    )
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Order(models.Model):
+    id = models.CharField(
+        default=shortuuid.uuid, max_length=50, primary_key=True, editable=False
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
+    ordered_at = models.DateTimeField(auto_now_add=True)
+
+
+class Payment(models.Model):
+    STATUS_INITIATED = "initiated"
+    STATUS_PROCESSING = "processing"
+    STATUS_SUCCESS = "success"
+    STATUS_FAILED = "failed"
+    STATUS_CHOICES = (
+        (STATUS_INITIATED, "Initiated"),
+        (STATUS_PROCESSING, "Processing"),
+        (STATUS_SUCCESS, "Success"),
+        (STATUS_FAILED, "Failed"),
+    )
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pidx = models.CharField(max_length=100, unique=True)
+    status = models.CharField(
+        max_length=15, choices=STATUS_CHOICES, default=STATUS_INITIATED
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.pidx
+
+# class Contact(models.Model):
