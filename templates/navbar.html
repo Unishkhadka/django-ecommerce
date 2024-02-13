@@ -5,7 +5,7 @@
         <li class="nav-item"><a href="{% url 'products' %}" class="nav-link link-body-emphasis px-2">Products</a></li>
         <li class="nav-item"><a href="{% url 'contact' %}" class="nav-link link-body-emphasis px-2">Contact</a></li>
         {% if request.user.is_authenticated %}
-        <li class="nav-item"><a href="{% url 'cart' %}" class="nav-link link-body-emphasis px-2"><i class="fa-solid fa-cart-shopping"></i></a></li>
+        <li class="nav-item"><a href="{% url 'cart' %}" class="nav-link link-body-emphasis px-2">Cart(0)</i></a></li>
         <li class="nav-item"><a href="{% url 'orders' %}" class="nav-link link-body-emphasis px-2">Orders</a></li>
         {% endif %}
       </ul>
@@ -25,7 +25,7 @@
   <header class="py-3 mb-4 border-bottom">
     <div class="container d-flex flex-wrap justify-content-center">
       <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none">
-        <span class="fs-4">Organic Store</span>
+        <span class="fs-4">Gadget Galaxy</span>
       </a>
       <form action="{% url "search" %}" class="col-12 col-lg-auto mb-3 mb-lg-0" role="search">
         <input name="search_query" type="search" class="form-control" placeholder="Search..." aria-label="Search">

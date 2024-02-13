@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block title %}{{product.product_name}} | Gadget Galaxy{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class=" mt-5">
+        <div class="card-body">
+            <h3 class="card-title mb-3">{{product.product_name}}</h3>
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-sm-6">
+                    <div class="white-box text-center"><img src="{{product.image.url}}" class="img-fluid"></div>
+                </div>
+                <div class="col-lg-7 col-md-7 col-sm-6">
+                    <h4 class="box-title">Product description</h4>
+                    <p>{{product.description}}</p>
+                    <h2 class="mt-5">
+                        Nrs. {{product.price}}
+                    </h2>
+                    <button class="btn btn-dark btn-rounded mr-1" data-toggle="tooltip" title="" data-original-title="Add to cart">
+                      Add to cart
+                    </button>
+                    <button class="btn btn-success btn-rounded">Buy Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
