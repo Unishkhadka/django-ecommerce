@@ -1,4 +1,208 @@
-{% extends "main.html" %}
-{% block content %}
-<h1>Cart</h1>
+{% extends "main.html" %} {% block content %}
+
+<section class="h-100">
+  <div class="container h-100 py-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-10">
+        {% if cart %} {% for item in cart %}
+        <div class="main-cart-div card rounded-3 mb-4">
+          <div class="card-body p-4">
+            <div class="row d-flex justify-content-between align-items-center">
+              <div class="col-md-2 col-lg-2 col-xl-2">
+                <img
+                  src="{{item.product.image.url}}"
+                  class="img-fluid rounded-3"
+                  alt="Cotton T-shirt"
+                />
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-3">
+                <p class="lead fw-normal mb-2">{{item.product.product_name}}</p>
+              </div>
+              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                <form
+                  id="cartItemDecrease"
+                  action=""
+                  method="POST"
+                  class="cart-item-decrease-form d-flex"
+                >
+                  {% csrf_token %}
+                  <input
+                    type="hidden"
+                    name="hidden_product_id"
+                    value="{{item.product.id}}"
+                  />
+                  <button
+                    name="minusItem"
+                    type="submit"
+                    class="minus btn btn-link px-2"
+                  >
+                    <i class="fas fa-minus"></i>
+                  </button>
+                </form>
+
+                <input
+                  id="form1"
+                  min="0"
+                  name="quantity"
+                  value="{{item.quantity}}"
+                  type="number"
+                  class="qtyCount form-control form-control-sm"
+                />
+
+                <form
+                  id="cartItemIncrease"
+                  action=""
+                  method="POST"
+                  class="cart-item-increase-form d-flex"
+                >
+                  {% csrf_token %}
+                  <input
+                    type="hidden"
+                    name="hidden_product_id"
+                    value="{{item.product.id}}"
+                  />
+                  <button
+                    name="plusItem"
+                    type="submit"
+                    class="plus btn btn-link px-2"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </form>
+              </div>
+              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                <h5 class="mb-0">
+                  Rs. <span class="price">{{ item.product.price }}</span>
+                </h5>
+              </div>
+              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <input
+                    type="hidden"
+                    class="hidden_product_id"
+                    name="hidden_product_id"
+                    value="{{item.product.id}}"
+                  />
+                  <button class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <a href="">
+          <div class="card">
+            <button class="btn btn-primary btn-lg" type="button">
+              Proceed to Checkout
+            </button>
+          </div>
+        </a>
+        {% else %}
+        <div class="col">
+          <h5 class="mb-3">
+            <a href="{% url 'products' %}" class="text-body"
+              ><i class="fas fa-long-arrow-alt-left me-2"></i>Continue
+              shopping</a
+            >
+          </h5>
+          <hr />
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <p class="mb-0">You have no items in your cart.</p>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+    const qtyCount = document.querySelectorAll('.qtyCount');
+    const price = document.querySelectorAll('.price');
+    const minus = document.querySelectorAll('.minus');
+    const plus = document.querySelectorAll('.plus');
+    const mainCartDiv = document.querySelectorAll('.main-cart-div');
+
+    for (let i = 0; i < qtyCount.length; i++) {
+        minus[i].addEventListener('click', () => {
+            if (qtyCount[i].value > 0) {
+                qtyCount[i].value--;
+                // if 0 remove main cart div
+                if (qtyCount[i].value == 0) {
+                    mainCartDiv[i].remove();
+                }
+                price[i].innerHTML = parseInt(price[i].innerHTML) - parseInt(price[i].innerHTML) / (parseInt(qtyCount[i].value) + 1);
+            }
+        });
+        plus[i].addEventListener('click', () => {
+            qtyCount[i].value++;
+            price[i].innerHTML = parseInt(price[i].innerHTML) + parseInt(price[i].innerHTML) / (parseInt(qtyCount[i].value) - 1);
+        });
+    }
+    $(document).ready(function () {
+        $(".cart-item-increase-form").submit(function (event) {
+            event.preventDefault();
+
+            var form = $(this);
+            var url = form.attr("action");
+            var method = form.attr("method");
+            var formData = form.serialize();
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                success: function (json) {
+                    $("#messageDiv").html(
+                        '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                        json.message +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+                    );
+                },
+                error: function (xhr, errmsg, err) {
+                    $("#messageDiv").html(
+                        '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                        errmsg +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+                    );
+                },
+            });
+        });
+    });
+    $(document).ready(function () {
+        $(".cart-item-decrease-form").submit(function (event) {
+            event.preventDefault();
+
+            var form = $(this);
+            var url = form.attr("action");
+            var method = form.attr("method");
+            var formData = form.serialize();
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: formData,
+                success: function (json) {
+                    $("#messageDiv").html(
+                        '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                        json.message +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+                    );
+                },
+                error: function (xhr, errmsg, err) {
+                    $("#messageDiv").html(
+                        '<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                        errmsg +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+                    );
+                },
+            });
+        });
+    });
+
+</script>
 {% endblock content %}

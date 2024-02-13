@@ -33,10 +33,12 @@ def single_product(request, pk):
 def contact(request):
     return render(request, "ecommerce/contact.html")
 
-
-@login_required(login_url="login")
+@login_required(login_url="/login")
 def cart(request):
-    return render(request, "ecommerce/cart.html")
+    cart = Cart.objects.filter(user=request.user).first()
+    cart_items = CartItem.objects.filter(cart=cart)
+    context = {"cart": cart_items}
+    return render(request, "ecommerce/cart.html", context)
 
 
 @login_required(login_url="login")
