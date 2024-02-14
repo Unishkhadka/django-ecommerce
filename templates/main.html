@@ -37,8 +37,8 @@
       </div>
       {% endfor %} {% endif %}
     </div>
-    {% include "navbar.html" %} {% block content %} {% endblock content %}
-    {%include "bottom.html" %}
+    {% include "top.html" %} {% include "navbar.html" %} {% block content %} 
+    {%endblock content %} {% include "bottom.html" %}
     <script>
       $(document).ready(function () {
         $(".add-to-cart-form").submit(function (e) {
