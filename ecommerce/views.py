@@ -4,6 +4,8 @@ from .models import *
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
+import requests
+import json
 
 
 def error_404(request, exception):
@@ -11,6 +13,10 @@ def error_404(request, exception):
 
 
 def index(request):
+    '''http://localhost:8000/?pidx=6Y3erRKfCqSStkzAzFmA7b&transaction_id=RkcfL8abKMRwrXF6oqNSFg&tidx=RkcfL8abKMRwrXF6oqNSFg&amount=100000&total_amount=100000&mobile=98XXXXX001&status=Completed&purchase_order_id=4235&purchase_order_name=Test%20Product'''
+
+    #get status from  url update status to completed if completed
+    # save billing address
     return render(request, "ecommerce/index.html")
 
 
@@ -107,15 +113,31 @@ def cart_item_delete(request):
 
 
 @login_required(login_url="login")
-def checkout(request):
+def payment(request):
+    url = "https://a.khalti.com/api/v2/epayment/initiate/"
     cart = Cart.objects.get(user=request.user)
     price = 0
     cart_items = CartItem.objects.filter(cart=cart)
-    print(cart_items)
     for item in cart_items:
         price += item.product.price * item.quantity
-    context = {"items": cart_items, "price": price}
-    return render(request, "ecommerce/checkout.html", context)
+    payload = {
+        "purchase_order_id": "4235",
+        "amount": 100000,
+        "website_url": "http://localhost:8000",
+        "return_url": "http://localhost:8000/",
+        "purchase_order_name": "Test Product",
+    }
+
+    headers = {"Authorization": "Key 8eb5e556328c47f2a2a4a7c9b3511b32"}
+
+    response = requests.post(url, json=payload, headers=headers)
+    res = response.json()
+    if response.status_code == 200:
+        # NOTE: create order 
+        # create order items where order = order, products and amount will come from cart items
+        # create payment user=user, order=order, amount=price, default initiated
+        return redirect(res['payment_url'])
+    return render(request, "ecommerce/checkout.html")
 
 
 @login_required(login_url="login")
@@ -124,26 +146,11 @@ def orders(request):
 
 
 @login_required(login_url="login")
-def payment(request):
-    URL = "https://a.khalti.com/api/v2/epayment/initiate/"
+def checkout(request):
     cart = Cart.objects.get(user=request.user)
     price = 0
     cart_items = CartItem.objects.filter(cart=cart)
-    print(cart_items)
     for item in cart_items:
         price += item.product.price * item.quantity
-    payload = {
-        "return_url": "http://127.0.0.1:8000/",
-        "website_url": "http://127.0.0.1:8000/",
-        "amount": price,
-        "purchase_order_id": cart.id,
-        "purchase_order_name": "test",
-        "customer_info": {
-            "name": request.user.full_name,
-            "email": request.user.email,
-            "phone": "9811496763",
-        }
-    }
-    if request.method == "POST":
-        pass
-    return render(request, "ecommerce/checkout.html")
+    context = {'items':cart_items, 'price':price}
+    return render(request, "ecommerce/checkout.html", context)
