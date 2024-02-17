@@ -5,10 +5,10 @@ from django.urls import path, include
 from django.conf.urls import handler404
 from ecommerce import views
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', include("ecommerce.urls")),
     path('user/', include("users.urls")),
-    path('admins/', include("admins.urls")),
-    path('admin/', admin.site.urls),
+    path('backend/', include("admins.urls")),
 ]
 
 handler404 = views.error_404

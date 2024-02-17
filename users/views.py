@@ -41,6 +41,4 @@ def register(request):
 @login_required(login_url="login")
 def logout_user(request):
     logout(request)
-    message = messages.success(request,"User logged out!")
-    context = {'message':message}
-    return render(request, "ecommerce/index.html", context)
+    return render(request, "ecommerce/index.html")

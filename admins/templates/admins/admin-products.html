@@ -1,1 +1,57 @@
-{% include "admins/dashboard.html" %}
+{% extends "admins/admin_base.html" %} {% load static %} 
+{% block title %}Products{% endblock title %}
+{% block admin-content%}
+<div class="container mx-auto">
+<table class=" table">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Image</th>
+      <th scope="col">Product</th>
+      <th scope="col">Category</th>
+      <th scope="col">Price</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr>
+      <td><img src="{{product.image.url}}" class='img-thumbnail object-fit-cover' alt="{{product.product_name}}" style="height: 45px; width: 65px"></td>
+      <td>{{product.product_name}}</td>
+      <td>{{product.category.category_name}}</td>
+      <td>{{product.price}}</td>
+          <td>
+            <a href="{% url "edit-product" product.id %}" class="btn btn-primary btn-sm">Edit</a>
+            {% comment %} <button class="btn btn-primary btn-sm">Edit</button> {% endcomment %}
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ product.id }}">
+              Delete
+            </button>
+            <form action="" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="product_id" value="{{ product.id }}" />
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal{{ product.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure?</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Confirm to delete {{ product.product_name }}.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-danger">Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock admin-content %}

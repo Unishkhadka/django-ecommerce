@@ -9,8 +9,11 @@
         {% endif %}
       </ul>
       {% if request.user.is_authenticated %}
-      <ul class="nav">
+      <ul class="nav gap-2">
         <li class="nav-item"><a href="{% url 'logout' %}" class="btn btn-danger btn-sm px-2">Logout</a></li>
+        {% if request.user.is_staff %}
+        <li class="nav-item"><a href="{% url 'dashboard' %}" class="btn btn-success btn-sm px-2">Admin Panel</a></li>
+        {% endif %}
       </ul>
       {% else %}
       <ul class="nav">

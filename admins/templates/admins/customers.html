@@ -1,0 +1,53 @@
+{% extends "admins/admin_base.html" %} 
+{% load static %} 
+{% block title %}Customers{% endblock title %}
+{% block admin-content %}
+<table class="table">
+  <thead>
+    <tr class="table-dark">
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for customer in customers %}
+      {% if not customer.is_superuser %}
+        <tr>
+          <td>{{ customer.full_name }}</td>
+          <td>{{ customer.email }}</td>
+          <td>
+            {% comment %} <button class="btn btn-primary btn-sm">Edit</button> {% endcomment %}
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ customer.id }}">
+              Delete
+            </button>
+            <form action="" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="customer" value="{{ customer.id }}" />
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal{{ customer.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Are you sure?</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Confirm to delete {{ customer.full_name }}.
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-danger">Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock admin-content %}
