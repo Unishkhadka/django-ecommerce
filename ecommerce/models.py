@@ -137,7 +137,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
 
     def __str__(self):
-        return str(self.id)
+        return str(f"{self.order.user.full_name} order for {self.product.product_name}")
 
 
 class BillingAddress(models.Model):

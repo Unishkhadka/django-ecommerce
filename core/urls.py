@@ -7,6 +7,7 @@ from ecommerce import views
 urlpatterns = [
     path('', include("ecommerce.urls")),
     path('user/', include("users.urls")),
+    path('admins/', include("admins.urls")),
     path('admin/', admin.site.urls),
 ]
 

@@ -26,6 +26,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "jazzmin",
+    "admins",
     "users",
     "ecommerce",
     "django.contrib.admin",

@@ -3,7 +3,7 @@
 <div class="album py-5">
   <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-      {% for product in products %}
+      {% for product in page_obj %}
       <div class="col">
         <div class="card shadow-sm">
           <img class="img-thumbnail object-fit-cover" src={{ product.image.url }} style="height: 250px;">
@@ -11,7 +11,7 @@
               <strong>{{ product.product_name }}</strong>
               <p class="card-text text-truncate">{{ product.description }}</p>
               <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
+                <div class="d-flex gap-2">
                   <a href={% url "product" product.id %} type="button" class="btn btn-sm btn-outline-secondary">View</a>
                 <form action="{% url 'add-to-cart' %}" class="add-to-cart-form" method="post">
                   {% csrf_token %}
@@ -27,6 +27,19 @@
     </div>
     {% endfor %}
   </div>
+  <div class="mt-4">
+    {% if page_obj.has_previous %}
+    <a href="?page={{page_obj.previous_page_number}}&search_query={{query}}" class="btn btn-outline-secondary">Previous</a>
+    {% endif %}
+    {% if avail_pages %}
+    {% for page in total_pages %}
+    <a href="?page={{page}}&search_query={{query}}" class="btn btn-outline-secondary">{{page}}</a>
+    {% endfor %}
+    {% endif %}
+    {% if page_obj.has_next %}
+    <a href="?page={{page_obj.next_page_number}}&search_query={{query}}" class="btn btn-outline-secondary">Next</a>
+    {% endif %}
+  </div> 
 </div>
   </div>
 {% endblock content %}
