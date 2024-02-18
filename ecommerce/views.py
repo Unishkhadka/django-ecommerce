@@ -1,12 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.contrib import messages
+from django.db.models import Sum
 from django.db.models import Q
 import requests
 import json
-from django.core.paginator import Paginator
 from .models import *
+import math
 
 
 def error_404(request, exception):
@@ -29,20 +31,40 @@ def products(request):
         )
     else:
         p = Product.objects.all()
-        q=''
+        q = ""
 
     paginator = Paginator(p, 3)
     pg_no = request.GET.get("page")
     page_obj = paginator.get_page(pg_no)
     total_pages = range(1, paginator.num_pages + 1)
-    avail_pages = paginator.num_pages>1
-    context = {'query':q,"avail_pages":avail_pages,"total_pages": total_pages, "page_obj": page_obj}
+    avail_pages = paginator.num_pages > 1
+    context = {
+        "query": q,
+        "avail_pages": avail_pages,
+        "total_pages": total_pages,
+        "page_obj": page_obj,
+    }
     return render(request, "ecommerce/products.html", context)
 
 
 def single_product(request, pk):
     product = Product.objects.get(id=pk)
-    context = {"product": product}
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect("login")
+        review = Review()
+        review.product = product
+        review.review = request.POST.get("review")
+        review.user = request.user
+        review.rating = request.POST.get("rating")
+        review.save()
+    reviews = Review.objects.filter(product=product)
+    total = Review.objects.aggregate(total=Sum("rating"))["total"]
+    if reviews.count() > 0:
+        average_rating = math.floor(total / reviews.count())
+    else:
+        average_rating = 0
+    context = {"product": product, "reviews": reviews, "average_rating": average_rating}
     return render(request, "ecommerce/product.html", context)
 
 
