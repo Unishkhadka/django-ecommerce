@@ -1,11 +1,11 @@
 {% extends "admins/admin_base.html" %}
 {% load static %} 
-{% block title %}Edit Product{% endblock title %} 
+{% block title %}Add Product{% endblock title %} 
 {% block admin-content %}
 <div class="col-12 mt-3">
   <div class="card">
     <div class="card-body">
-      <h1 class="card-title">Edit Product</h1>
+      <h1 class="card-title">Add Product</h1>
       <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="row">
@@ -16,8 +16,8 @@
                 id="productname"
                 name="productname"
                 type="text"
-                value="{{product.product_name}}"
                 class="form-control"
+                required
               />
             </div>
             <div class="form-group mb-3">
@@ -27,7 +27,7 @@
                 name="price"
                 type="number"
                 class="form-control"
-                value="{{product.price}}"
+                required
               />
             </div>
             <div class="form-group mb-3">
@@ -38,17 +38,12 @@
               tabindex="-1"
               aria-hidden="true"
               name="category"
+              required
           >
               {% for category in categories %}
-                  {% if category.id == product.category.id %}
-                      <option value="{{category.id}}" selected>
-                          {{category.category_name}}
-                      </option>
-                  {% else %}
                       <option value="{{category.id}}">
                           {{category.category_name}}
                       </option>
-                  {% endif %}
               {% endfor %}
           </select>
             </div>
@@ -56,14 +51,13 @@
           <div class="col-sm-6">
             <div class="form-group mb-3">
               <label for="productdesc" class="mb-2">Product Description</label>
-              <textarea class="form-control" id="productdesc" rows="5" name="description">
-                {{product.description}}</textarea>
+              <textarea class="form-control" id="productdesc" rows="5" name="description"></textarea>
             </div>
             <div class="form-group mb-3">
               <label class="mb-2">Product Image</label> <br />
               <img
                 id="previewImage"
-                src="{{ product.image.url }}"
+                src="{% static "products/default.jpg" %}"
                 alt="product img"
                 class="img-fluid rounded"
                 style="max-width: 200px"
@@ -76,6 +70,7 @@
                   id="formFile"
                   onchange="previewFile()"
                   name="image"
+                  required
                 />
               </div>
             </div>

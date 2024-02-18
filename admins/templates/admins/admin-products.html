@@ -2,6 +2,16 @@
 {% block title %}Products{% endblock title %}
 {% block admin-content%}
 <div class="container mx-auto">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h1>Products</h1>
+    </div>
+    <div class="me-5">
+      <a href="{% url "add-product" %}" class="btn btn-primary btn-sm">Add Product</a>
+    </div>
+  </div>
+</div>
+
 <table class=" table">
   <thead class="table-dark">
     <tr>

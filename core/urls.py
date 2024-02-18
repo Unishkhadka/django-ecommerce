@@ -8,7 +8,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("ecommerce.urls")),
     path('user/', include("users.urls")),
-    path('backend/', include("admins.urls")),
+    path('admins/', include("admins.urls")),
 ]
 
 handler404 = views.error_404
