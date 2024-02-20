@@ -20,6 +20,25 @@ def orders(request):
     return render(request, "admins/orders.html", context)
 
 
+def edit_order(request, pk):
+    if not is_admin(request):
+        return redirect("index")
+    payment = Payment.objects.get(id=pk)
+    order = payment.order
+    order_items = OrderItem.objects.filter(order=order)
+    billing_address = BillingAddress.objects.get(payment=payment)
+    price = 0
+    for item in order_items:
+        price += item.product.price * item.quantity
+    context = {
+        "payment": payment,
+        "details": billing_address,
+        "order_items": order_items,
+        "price": price,
+    }
+    return render(request, "admins/edit_order.html", context)
+
+
 def admin_products(request):
     if not is_admin(request):
         return redirect("index")

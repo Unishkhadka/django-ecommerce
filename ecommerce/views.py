@@ -205,6 +205,7 @@ def payment(request):
             zip_code=zip,
             user=request.user,
             order=my_order,
+            payment=payment
         )
         payment = Payment(order=my_order, pidx=res['pidx'], amount=price, user=request.user)
         payment.save()

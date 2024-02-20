@@ -103,7 +103,7 @@ class Payment(models.Model):
         (STATUS_SUCCESS, "Success"),
         (STATUS_FAILED, "Failed"),
     )
-    order = models.ForeignKey("Order", on_delete=models.CASCADE)
+    order = models.OneToOneField("Order", on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     pidx = models.CharField(max_length=100, unique=True)
     status = models.CharField(
@@ -153,6 +153,7 @@ class BillingAddress(models.Model):
     zip_code = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     order = models.ForeignKey("Order", on_delete=models.CASCADE)
+    payment = models.OneToOneField(Payment, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

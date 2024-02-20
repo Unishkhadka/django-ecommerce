@@ -27,7 +27,8 @@
         <td class="align-middle">{{ payment.status }}</td>
         <td class="align-middle">{{payment.amount}}</td>
         <td class="align-middle">
-            <button class="btn btn-primary btn-sm">Edit</button>
+            <a href="" class="btn btn-primary btn-sm">Edit</a>
+            <a href="{% url "edit-order" payment.id%}" class="btn btn-secondary btn-sm">Details</a>
         </td>
       </tr>
       {% endfor %}
