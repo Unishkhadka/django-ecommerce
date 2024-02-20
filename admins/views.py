@@ -15,7 +15,9 @@ def dashboard(request):
 def orders(request):
     if not is_admin(request):
         return redirect("index")
-    return render(request, "admins/orders.html")
+    payments = Payment.objects.all()
+    context = {"payments": payments}
+    return render(request, "admins/orders.html", context)
 
 
 def admin_products(request):

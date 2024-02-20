@@ -14,9 +14,9 @@
     {% for customer in customers %}
       {% if not customer.is_superuser %}
         <tr>
-          <td>{{ customer.full_name }}</td>
-          <td>{{ customer.email }}</td>
-          <td>
+          <td class="align-middle">{{ customer.full_name }}</td>
+          <td class="align-middle">{{ customer.email }}</td>
+          <td class="align-middle">
             {% comment %} <button class="btn btn-primary btn-sm">Edit</button> {% endcomment %}
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal{{ customer.id }}">

@@ -14,12 +14,26 @@ import math
 def error_404(request, exception):
     return render(request, "ecommerce/404.html")
 
-
 def index(request):
-    """http://localhost:8000/?pidx=6Y3erRKfCqSStkzAzFmA7b&transaction_id=RkcfL8abKMRwrXF6oqNSFg&tidx=RkcfL8abKMRwrXF6oqNSFg&amount=100000&total_amount=100000&mobile=98XXXXX001&status=Completed&purchase_order_id=4235&purchase_order_name=Test%20Product"""
+    if request.method == "GET":
+        # Fetch query parameters
+        status = request.GET.get('status')
+        purchase_order_id = request.GET.get('purchase_order_id')
+        
+        # Check if the status is 'Completed'
+        if status == 'Completed' and purchase_order_id:
+            # Update the status of the corresponding payment
+            try:
+                payment = Payment.objects.get(order__id=purchase_order_id)
+                payment.status = 'success'  # Assuming the status field in Payment model
+                payment.save()
+            except Payment.DoesNotExist:
+                # Handle case where no corresponding payment is found
+                pass
+        else:
+            pass
 
-    # get status from  url update status to completed if completed
-    # save billing address
+    # Render the index page (you can adjust this based on your requirements)
     return render(request, "ecommerce/index.html")
 
 
@@ -156,32 +170,16 @@ def payment(request):
             if not value:
                 messages.error(request, f"Please enter {key}")
                 return redirect("checkout")
-        order = Order.objects.create(user=request.user)
-        BillingAddress.objects.create(
-            first_name=fname,
-            last_name=lname,
-            email=email,
-            address=address,
-            address2=address2,
-            state=state,
-            zip_code=zip,
-            user=request.user,
-            order=order,
-        )
     cart = Cart.objects.get(user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
-    my_order = Order.objects.get(user=request.user)
-    for item in cart_items:
-        OrderItem.objects.create(
-            order=my_order, product=item.product, quantity=item.quantity
-        )
+    my_order, created = Order.objects.get_or_create(user=request.user)
     url = "https://a.khalti.com/api/v2/epayment/initiate/"
     price = 0
     for item in cart_items:
         price += item.product.price * item.quantity
     payload = {
-        "purchase_order_id": "4235",
-        "amount": 100000,
+        "purchase_order_id": my_order.id,
+        "amount": price,
         "website_url": "http://localhost:8000",
         "return_url": "http://localhost:8000/",
         "purchase_order_name": "Test Product",
@@ -191,7 +189,25 @@ def payment(request):
 
     response = requests.post(url, json=payload, headers=headers)
     res = response.json()
+
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=my_order, product=item.product, quantity=item.quantity
+        )
     if response.status_code == 200:
+        BillingAddress.objects.create(
+            first_name=fname,
+            last_name=lname,
+            email=email,
+            address=address,
+            address2=address2,
+            state=state,
+            zip_code=zip,
+            user=request.user,
+            order=my_order,
+        )
+        payment = Payment(order=my_order, pidx=res['pidx'], amount=price, user=request.user)
+        payment.save()
         # NOTE: create order
         # create order items where order = order, products and amount will come from cart items
         # create payment user=user, order=order, amount=price, default initiated

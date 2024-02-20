@@ -125,7 +125,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.user.full_name + "order")
+        return str(self.user.full_name + " order")
 
 
 class OrderItem(models.Model):

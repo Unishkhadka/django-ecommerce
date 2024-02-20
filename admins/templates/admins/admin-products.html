@@ -25,11 +25,11 @@
   <tbody>
     {% for product in products %}
     <tr>
-      <td><img src="{{product.image.url}}" class='img-thumbnail object-fit-cover' alt="{{product.product_name}}" style="height: 45px; width: 65px"></td>
-      <td>{{product.product_name}}</td>
-      <td>{{product.category.category_name}}</td>
-      <td>{{product.price}}</td>
-          <td>
+      <td class="align-middle"><img src="{{product.image.url}}" class='img-thumbnail object-fit-cover' alt="{{product.product_name}}" style="height: 45px; width: 65px"></td>
+      <td class="align-middle">{{product.product_name}}</td>
+      <td class="align-middle">{{product.category.category_name}}</td>
+      <td class="align-middle">{{product.price}}</td>
+          <td class="align-middle">
             <a href="{% url "edit-product" product.id %}" class="btn btn-primary btn-sm">Edit</a>
             {% comment %} <button class="btn btn-primary btn-sm">Edit</button> {% endcomment %}
             <!-- Button trigger modal -->
