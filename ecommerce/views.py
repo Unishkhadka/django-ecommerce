@@ -32,6 +32,9 @@ def index(request):
                 pass
         else:
             pass
+        cart = Cart.objects.filter(user=request.user)
+        for cart_item in cart:
+            cart_item.delete()
 
     # Render the index page (you can adjust this based on your requirements)
     return render(request, "ecommerce/index.html")
@@ -192,9 +195,11 @@ def payment(request):
 
     for item in cart_items:
         OrderItem.objects.create(
-            order=my_order, product=item.product, quantity=item.quantity
+            order=my_order or created, product=item.product, quantity=item.quantity
         )
     if response.status_code == 200:
+        payment = Payment(order=my_order or created, pidx=res['pidx'], amount=price, user=request.user)
+        payment.save()
         BillingAddress.objects.create(
             first_name=fname,
             last_name=lname,
@@ -204,14 +209,9 @@ def payment(request):
             state=state,
             zip_code=zip,
             user=request.user,
-            order=my_order,
+            order=my_order or created,
             payment=payment
         )
-        payment = Payment(order=my_order, pidx=res['pidx'], amount=price, user=request.user)
-        payment.save()
-        # NOTE: create order
-        # create order items where order = order, products and amount will come from cart items
-        # create payment user=user, order=order, amount=price, default initiated
         return redirect(res["payment_url"])
     return render(request, "ecommerce/checkout.html")
 
