@@ -12,7 +12,7 @@ def dashboard(request):
     return render(request, "admins/dashboard.html")
 
 
-def orders(request):
+def admin_orders(request):
     if not is_admin(request):
         return redirect("index")
     payments = Payment.objects.all()
